@@ -1,4 +1,4 @@
-# Виртуальное окружение
+
 venv/
 env/
 .env
@@ -22,17 +22,17 @@ build/
 *.swo
 *~
 
-# Базы данных
+
 *.db
 *.sqlite3
 
-# Логи
+
 *.log
 
-# OS
+
 .DS_Store
 Thumbs.db
 
-# Проект
+
 *.db
 instance/

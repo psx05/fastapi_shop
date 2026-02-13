@@ -85,5 +85,5 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/ТВОЙ_ЛОГИН/fastapi-shop.git
+git clone https://github.com/psx05/fastapi_shop.git
 cd fastapi-shop

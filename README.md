@@ -71,29 +71,6 @@
 | **Uvicorn** | 0.30+ | Высокопроизводительный ASGI-сервер |
 | **psycopg3** | 3.2+ | Асинхронный драйвер PostgreSQL |
 
----
 
-🗂️ Структура проекта
-text
-fastapi-shop/
-├── 📁 app/
-│   ├── 📄 __init__.py
-│   ├── 📄 main.py                 # Точка входа, инициализация приложения
-│   ├── 📄 database.py              # Подключение к БД, сессии
-│   ├── 📄 models.py                # SQLAlchemy модели (таблицы)
-│   ├── 📄 schemas.py               # Pydantic схемы (валидация)
-│   ├── 📄 crud.py                  # CRUD операции
-│   └── 📁 routers/
-│       ├── 📄 __init__.py
-│       └── 📄 products.py          # Роуты для товаров
-├── 📁 scripts/
-│   └── 📄 seed_db.py               # Скрипт для заполнения БД
-├── 📁 tests/                        # Тесты (soon)
-├── 📄 .env                          # Переменные окружения (не в Git!)
-├── 📄 .gitignore                    # Игнорируемые файлы
-├── 📄 requirements.txt              # Зависимости
-├── 📄 seed.sql                      # Дамп тестовых данных
-├── 📄 README.md                     # Документация
-└── 📄 docker-compose.yml            # Docker-конфигурация (soon)
 
 

@@ -1,0 +1,38 @@
+# Виртуальное окружение
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Базы данных
+*.db
+*.sqlite3
+
+# Логи
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Проект
+*.db
+instance/

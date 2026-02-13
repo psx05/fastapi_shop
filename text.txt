@@ -1,0 +1,13 @@
+fastapi_shop/
+├── app/
+│   ├── __init__.py
+│   ├── main.py          # Точка входа
+│   ├── database.py      # Подключение к БД
+│   ├── models.py        # SQLAlchemy модели
+│   ├── schemas.py       # Pydantic схемы
+│   ├── crud.py          # Функции работы с БД
+│   └── routers/
+│       ├── __init__.py
+│       └── products.py  # Роуты для товаров
+├── .env                 # Переменные окружения
+└── requirements.txt

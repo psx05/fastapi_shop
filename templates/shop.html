@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Shop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        /* Шапка */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .cart-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cart-btn:hover {
+            background: #0056b3;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-login {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-register {
+            background: #28a745;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Категории */
+        .categories {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .category-tag {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: all 0.2s;
+        }
+
+        .category-tag:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .category-tag.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Товары */
+        .products-grid {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 48px;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .add-to-cart:hover {
+            background: #0056b3;
+        }
+
+        .add-to-cart:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Корзина */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .cart-modal.active {
+            display: flex;
+        }
+
+        .cart-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+        }
+
+        .cart-item-price {
+            color: #28a745;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .cart-quantity {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <div class="header-content">
+            <a href="/" class="logo">🛒 FastAPI Shop</a>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div id="authSection"></div>
+                <button class="cart-btn" onclick="openCart()">
+                    🛍️ Корзина <span id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Категории -->
+    <div class="categories" id="categories"></div>
+
+    <!-- Товары -->
+    <div id="products" class="products-grid"></div>
+
+    <!-- Модалка корзины -->
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-content">
+            <button class="close-btn" onclick="closeCart()">×</button>
+            <h2>🛍️ Корзина</h2>
+            <div id="cartItems"></div>
+            <div id="cartTotal" class="cart-total"></div>
+            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+        </div>
+    </div>
+
+    <script>
+        // Состояние приложения
+        let allProducts = [];
+        let categories = [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentCategory = null;
+        let user = null;
+
+        // Элементы DOM
+        const productsContainer = document.getElementById('products');
+        const categoriesContainer = document.getElementById('categories');
+        const cartCount = document.getElementById('cartCount');
+        const authSection = document.getElementById('authSection');
+
+        // Проверяем авторизацию при загрузке
+        async function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch('/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    user = await response.json();
+                    updateAuthUI();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        // Обновляем UI авторизации
+        function updateAuthUI() {
+            if (user) {
+                authSection.innerHTML = `
+                    <div class="user-info">
+                        <span class="username">👤 ${user.username}</span>
+                        <button class="logout-btn" onclick="logout()">Выйти</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `
+                    <div class="auth-buttons">
+                        <a href="/login" class="btn btn-login">Войти</a>
+                        <a href="/register" class="btn btn-register">Регистрация</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Выход
+        function logout() {
+            localStorage.removeItem('access_token');
+            user = null;
+            updateAuthUI();
+        }
+
+        // Загрузка категорий
+        async function loadCategories() {
+            try {
+                const response = await fetch('/categories/');
+                categories = await response.json();
+
+                categoriesContainer.innerHTML = `
+                    <span class="category-tag ${!currentCategory ? 'active' : ''}"
+                          onclick="filterByCategory(null)">Все товары</span>
+                `;
+
+                categories.forEach(cat => {
+                    categoriesContainer.innerHTML += `
+                        <span class="category-tag ${currentCategory === cat.id ? 'active' : ''}"
+                              onclick="filterByCategory(${cat.id})">🏷️ ${cat.name}</span>
+                    `;
+                });
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        // Загрузка товаров
+        async function loadProducts() {
+            try {
+                productsContainer.innerHTML = '<div class="loading">⏳ Загрузка...</div>';
+
+                let url = '/products/';
+                if (currentCategory) {
+                    url += `?category_id=${currentCategory}`;
+                }
+
+                const response = await fetch(url);
+                allProducts = await response.json();
+                displayProducts();
+            } catch (error) {
+                productsContainer.innerHTML = '<div class="error">❌ Ошибка загрузки</div>';
+            }
+        }
+
+        // Отображение товаров
+        function displayProducts() {
+            if (allProducts.length === 0) {
+                productsContainer.innerHTML = '<div class="loading">😕 Товаров не найдено</div>';
+                return;
+            }
+
+            productsContainer.innerHTML = allProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <div class="product-info">
+                        <div class="product-title">${product.name}</div>
+                        <div class="product-description">${product.description || 'Нет описания'}</div>
+                        <div class="product-price">💰 ${product.price.toLocaleString()} ₽</div>
+                        <div class="product-stock">📦 Осталось: ${product.stock}</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price})">
+                            🛒 В корзину
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Фильтрация по категории
+        function filterByCategory(categoryId) {
+            currentCategory = categoryId;
+            loadProducts();
+            loadCategories(); // обновляем активный класс
+        }
+
+        // Корзина
+        function addToCart(id, name, price) {
+            if (!user) {
+                alert('🔐 Войдите, чтобы добавлять товары в корзину');
+                window.location.href = '/login';
+                return;
+            }
+
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = count;
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cartModal');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #666;">Корзина пуста</p>';
+                cartTotal.innerHTML = '';
+            } else {
+                let total = 0;
+                cartItems.innerHTML = cart.map(item => {
+                    total += item.price * item.quantity;
+                    return `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">${item.name}</div>
+                                <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
+                            </div>
+                            <div class="cart-item-actions">
+                                <input type="number" class="cart-quantity" value="${item.quantity}" min="1"
+                                       onchange="updateQuantity(${item.id}, this.value)">
+                                <button class="remove-btn" onclick="removeFromCart(${item.id})">Удалить</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                cartTotal.innerHTML = `ИТОГО: ${total.toLocaleString()} ₽`;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('active');
+        }
+
+        function updateQuantity(id, quantity) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity = parseInt(quantity) || 1;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                openCart(); // обновляем отображение
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            openCart(); // обновляем отображение
+        }
+
+        function checkout() {
+            if (!user) {
+                alert('🔐 Войдите, чтобы оформить заказ');
+                closeCart();
+                window.location.href = '/login';
+                return;
+            }
+
+            alert('✅ Заказ оформлен! (пока заглушка)');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            closeCart();
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadCategories();
+            await loadProducts();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>

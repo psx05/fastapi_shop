@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List, ForwardRef
+from datetime import datetime
+from typing import Optional
 
 # Используем ForwardRef для корректных ссылок
 ProductRef = ForwardRef("Product")
@@ -57,3 +59,30 @@ from .schemas import Product
 
 CategoryWithProducts.model_rebuild()
 Product.model_rebuild()
+
+# ---------- User Schemas ----------
+class UserBase(BaseModel):
+    email: str
+    username: str
+
+class UserCreate(UserBase):
+    password: str  # пароль приходит от клиента
+
+class User(UserBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True  # orm_mode в новых версиях Pydantic
+
+class UserInDB(User):
+    hashed_password: str  # для внутреннего использования
+
+# ---------- Token Schemas ----------
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
